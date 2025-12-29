@@ -1,9 +1,6 @@
 from engine.actions import ActionType
-from engine.config import ROAD_BUILD_COST
-from engine.actions import ActionType
-from engine.config import ATTACK_FACTOR, DEFENSE_FACTOR
-
-
+from engine.config import ATTACK_FACTOR, DEFENSE_FACTOR, ROAD_BUILD_COST
+from engine.config import TRADE_POOL_FACTOR, AIR_TRADE_PENALTY
 
 def resolve_round(state, actions_by_player):
     state.round += 1
@@ -12,8 +9,6 @@ def resolve_round(state, actions_by_player):
     _resolve_trade(state, actions_by_player)
     _resolve_build(state, actions_by_player)
     _resolve_decay(state)
-
-from engine.actions import ActionType
 
 def _resolve_destroy(state, actions_by_player):
     """
@@ -77,9 +72,6 @@ def _resolve_attack(state, actions_by_player):
     for u, v in roads_to_remove:
         state.remove_road(u, v)
 
-
-from engine.actions import ActionType
-from engine.config import TRADE_POOL_FACTOR, AIR_TRADE_PENALTY
 
 def _resolve_trade(state, actions_by_player):
     """
@@ -169,4 +161,6 @@ def _resolve_build(state, actions_by_player):
 
             state.add_road(i, j)
             built.add((i, j))
-def _resolve_decay(state): pass
+            
+def _resolve_decay(state): 
+    pass
