@@ -18,13 +18,28 @@
           }
         ],
         "2": [],
-        "3": [],
+        "3": [
+          {
+            "type": "TRADE",
+            "target": 9
+          }
+        ],
         "4": [],
         "5": [],
         "6": [],
         "7": [],
-        "8": [],
-        "9": []
+        "8": [
+          {
+            "type": "TRADE",
+            "target": 9
+          }
+        ],
+        "9": [
+          {
+            "type": "TRADE",
+            "target": 5
+          }
+        ]
       },
       "state_before": {
         "round": 0,
@@ -154,14 +169,54 @@
             "target": 0
           }
         ],
-        "2": [],
-        "3": [],
-        "4": [],
-        "5": [],
-        "6": [],
-        "7": [],
-        "8": [],
-        "9": []
+        "2": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "3": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "4": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "5": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "6": [
+          {
+            "type": "TRADE",
+            "target": 9
+          }
+        ],
+        "7": [
+          {
+            "type": "TRADE",
+            "target": 8
+          }
+        ],
+        "8": [
+          {
+            "type": "TRADE",
+            "target": 3
+          }
+        ],
+        "9": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ]
       },
       "state_before": {
         "round": 1,
@@ -243,7 +298,7 @@
             "manufacturing": 0.0
           },
           "4": {
-            "economy": 100.0,
+            "economy": 110.0,
             "defense": 0.0,
             "manufacturing": 0.0
           },
@@ -279,18 +334,8 @@
     {
       "round": 3,
       "actions": {
-        "0": [
-          {
-            "type": "TRADE",
-            "target": 1
-          }
-        ],
-        "1": [
-          {
-            "type": "TRADE",
-            "target": 0
-          }
-        ],
+        "0": [],
+        "1": [],
         "2": [],
         "3": [],
         "4": [],
@@ -298,7 +343,12 @@
         "6": [],
         "7": [],
         "8": [],
-        "9": []
+        "9": [
+          {
+            "type": "TRADE",
+            "target": 7
+          }
+        ]
       },
       "state_before": {
         "round": 2,
@@ -324,7 +374,7 @@
             "manufacturing": 0.0
           },
           "4": {
-            "economy": 100.0,
+            "economy": 110.0,
             "defense": 0.0,
             "manufacturing": 0.0
           },
@@ -360,12 +410,12 @@
         "round": 3,
         "countries": {
           "0": {
-            "economy": 115.7625,
+            "economy": 110.25,
             "defense": 0.0,
             "manufacturing": 0.0
           },
           "1": {
-            "economy": 115.7625,
+            "economy": 110.25,
             "defense": 0.0,
             "manufacturing": 0.0
           },
@@ -380,7 +430,7 @@
             "manufacturing": 0.0
           },
           "4": {
-            "economy": 100.0,
+            "economy": 110.0,
             "defense": 0.0,
             "manufacturing": 0.0
           },
@@ -418,12 +468,12 @@
     "round": 3,
     "countries": {
       "0": {
-        "economy": 115.7625,
+        "economy": 110.25,
         "defense": 0.0,
         "manufacturing": 0.0
       },
       "1": {
-        "economy": 115.7625,
+        "economy": 110.25,
         "defense": 0.0,
         "manufacturing": 0.0
       },
@@ -438,7 +488,7 @@
         "manufacturing": 0.0
       },
       "4": {
-        "economy": 100.0,
+        "economy": 110.0,
         "defense": 0.0,
         "manufacturing": 0.0
       },
