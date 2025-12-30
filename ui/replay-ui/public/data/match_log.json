@@ -1,0 +1,523 @@
+{
+  "match_id": "local_test_001",
+  "n_players": 10,
+  "rounds": [
+    {
+      "round": 1,
+      "actions": {
+        "0": [
+          {
+            "type": "TRADE",
+            "target": 1
+          }
+        ],
+        "1": [
+          {
+            "type": "TRADE",
+            "target": 0
+          }
+        ],
+        "2": [],
+        "3": [
+          {
+            "type": "TRADE",
+            "target": 9
+          }
+        ],
+        "4": [],
+        "5": [],
+        "6": [],
+        "7": [],
+        "8": [
+          {
+            "type": "TRADE",
+            "target": 9
+          }
+        ],
+        "9": [
+          {
+            "type": "TRADE",
+            "target": 5
+          }
+        ]
+      },
+      "state_before": {
+        "round": 0,
+        "countries": {
+          "0": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "1": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "2": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "3": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "4": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "5": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "6": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "7": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "8": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "9": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          }
+        },
+        "roads": []
+      },
+      "state_after": {
+        "round": 1,
+        "countries": {
+          "0": {
+            "economy": 105.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "1": {
+            "economy": 105.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "2": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "3": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "4": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "5": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "6": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "7": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "8": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "9": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          }
+        },
+        "roads": []
+      }
+    },
+    {
+      "round": 2,
+      "actions": {
+        "0": [
+          {
+            "type": "TRADE",
+            "target": 1
+          }
+        ],
+        "1": [
+          {
+            "type": "TRADE",
+            "target": 0
+          }
+        ],
+        "2": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "3": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "4": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "5": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ],
+        "6": [
+          {
+            "type": "TRADE",
+            "target": 9
+          }
+        ],
+        "7": [
+          {
+            "type": "TRADE",
+            "target": 8
+          }
+        ],
+        "8": [
+          {
+            "type": "TRADE",
+            "target": 3
+          }
+        ],
+        "9": [
+          {
+            "type": "TRADE",
+            "target": 4
+          }
+        ]
+      },
+      "state_before": {
+        "round": 1,
+        "countries": {
+          "0": {
+            "economy": 105.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "1": {
+            "economy": 105.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "2": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "3": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "4": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "5": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "6": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "7": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "8": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "9": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          }
+        },
+        "roads": []
+      },
+      "state_after": {
+        "round": 2,
+        "countries": {
+          "0": {
+            "economy": 110.25,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "1": {
+            "economy": 110.25,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "2": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "3": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "4": {
+            "economy": 110.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "5": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "6": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "7": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "8": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "9": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          }
+        },
+        "roads": []
+      }
+    },
+    {
+      "round": 3,
+      "actions": {
+        "0": [],
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": [
+          {
+            "type": "TRADE",
+            "target": 7
+          }
+        ]
+      },
+      "state_before": {
+        "round": 2,
+        "countries": {
+          "0": {
+            "economy": 110.25,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "1": {
+            "economy": 110.25,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "2": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "3": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "4": {
+            "economy": 110.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "5": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "6": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "7": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "8": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "9": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          }
+        },
+        "roads": []
+      },
+      "state_after": {
+        "round": 3,
+        "countries": {
+          "0": {
+            "economy": 110.25,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "1": {
+            "economy": 110.25,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "2": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "3": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "4": {
+            "economy": 110.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "5": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "6": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "7": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "8": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          },
+          "9": {
+            "economy": 100.0,
+            "defense": 0.0,
+            "manufacturing": 0.0
+          }
+        },
+        "roads": []
+      }
+    }
+  ],
+  "final_state": {
+    "round": 3,
+    "countries": {
+      "0": {
+        "economy": 110.25,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "1": {
+        "economy": 110.25,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "2": {
+        "economy": 100.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "3": {
+        "economy": 100.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "4": {
+        "economy": 110.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "5": {
+        "economy": 100.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "6": {
+        "economy": 100.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "7": {
+        "economy": 100.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "8": {
+        "economy": 100.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      },
+      "9": {
+        "economy": 100.0,
+        "defense": 0.0,
+        "manufacturing": 0.0
+      }
+    },
+    "roads": []
+  }
+}
