@@ -6,9 +6,10 @@ def parse_bot_actions(bot_output):
     for a in bot_output:
         try:
             action_type = ActionType(a["type"])
-            target = int(a["target"])
+            # target is optional for some actions (INVEST)
+            target = a.get("target", -1) 
             actions.append(Action(action_type, target))
         except Exception:
-            continue  # invalid action ignored (for now)
+            continue  # invalid action ignored
 
     return actions

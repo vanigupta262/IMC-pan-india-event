@@ -1,6 +1,7 @@
 def serialize_state(state):
     return {
         "round": state.round,
+        "black_swan_round": state.black_swan_round,
         "countries": {
             cid: {
                 "economy": c.economy,
@@ -9,5 +10,6 @@ def serialize_state(state):
             }
             for cid, c in state.countries.items()
         },
-        "roads": list(state.roads)
+        "roads": list(state.roads),
+        "history": state.history
     }
