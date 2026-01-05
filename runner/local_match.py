@@ -101,6 +101,8 @@
 
 # print("\nMatch log written to match_log.json")
 import json
+import os
+import shutil
 from engine.state import GameState
 from engine.resolver import resolve_round
 from engine.config import N_PLAYERS
@@ -109,6 +111,8 @@ from runner.bot_adapter import parse_bot_actions
 from engine.serialize import serialize_state
 from runner.serialize import serialize_actions
 from runner.sandbox_runner import run_bots_parallel
+from bots.trade_bot import PM as trade_PM
+from bots.random_bot import PM as random_PM
 
 print("Local match runner started")
 
@@ -131,32 +135,58 @@ BOT_PATHS = {
     7: "bots/random_bot.py",
     8: "bots/random_bot.py",
     9: "bots/random_bot.py"
-    
 }
+
+# Fallback: allow running bots in-process if sandbox/docker is unavailable.
+USE_SANDBOX = os.environ.get("USE_SANDBOX", "auto")  # "true" | "false" | "auto"
+
+def docker_available() -> bool:
+    # quick check: is docker executable present
+    return shutil.which("docker") is not None
 
 for r in range(3):
     print(f"\nRound {r+1}")
 
     actions_by_player = {}
 
-    # 1. Build sandbox jobs
-    jobs = []
-    for pid in range(N_PLAYERS):
-        bot_path = BOT_PATHS.get(pid)
-        if bot_path is None:
-            actions_by_player[pid] = []
-            continue
+    run_in_sandbox = (
+        (USE_SANDBOX.lower() == "true") or
+        (USE_SANDBOX.lower() == "auto" and docker_available())
+    )
 
-        bot_state = build_bot_state(state, pid)
-        jobs.append((pid, bot_path, bot_state))
+    if run_in_sandbox:
+        # 1. Build sandbox jobs
+        jobs = []
+        for pid in range(N_PLAYERS):
+            bot_path = BOT_PATHS.get(pid)
+            if bot_path is None:
+                actions_by_player[pid] = []
+                continue
 
-    # 2. Run bots in parallel
-    outputs = run_bots_parallel(jobs)
+            bot_state = build_bot_state(state, pid)
+            jobs.append((pid, bot_path, bot_state))
 
-    # 3. Parse bot outputs
-    for pid in range(N_PLAYERS):
-        raw = outputs.get(pid, [])
-        actions_by_player[pid] = parse_bot_actions(raw)
+        # 2. Run bots in parallel via Docker sandbox
+        outputs = run_bots_parallel(jobs)
+
+        # 3. Parse bot outputs
+        for pid in range(N_PLAYERS):
+            raw = outputs.get(pid, [])
+            actions_by_player[pid] = parse_bot_actions(raw)
+    else:
+        # In-process bot calls as fallback
+        for pid in range(N_PLAYERS):
+            bot_state = build_bot_state(state, pid)
+            # Map by path for consistency
+            bot_path = BOT_PATHS.get(pid)
+            if bot_path is None:
+                actions_by_player[pid] = []
+                continue
+            if "trade_bot.py" in bot_path:
+                raw = trade_PM(bot_state)
+            else:
+                raw = random_PM(bot_state)
+            actions_by_player[pid] = parse_bot_actions(raw)
 
     state_before = serialize_state(state)
     actions_serialized = serialize_actions(actions_by_player)
