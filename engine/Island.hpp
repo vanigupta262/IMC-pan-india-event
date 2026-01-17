@@ -15,11 +15,13 @@ public:
     int degreeDelta;
 
     Island(int id)
-        : id(id),
+        : defense(0.0),
+        manufacturing(0.0),
+        id(id),
         economy(Config::START_ECONOMY),
+        degree(0),
         economyDelta(0.0),
-        defense(0.0),
-        manufacturing(0.0), degree(0) {
+        degreeDelta(0) {
     }
 
     void investInDefense() {

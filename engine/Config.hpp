@@ -1,7 +1,8 @@
 #pragma once
 
 namespace Config {
-    constexpr int N_PLAYERS{ 5 };
+    constexpr int N_PLAYERS{ 2 };
+    constexpr int NUM_ROUNDS{ 10 };
 
     constexpr double START_ECONOMY{ 1000.0 };
 

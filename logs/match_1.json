@@ -1,0 +1,254 @@
+{
+  "match_id": 1,
+  "n_players": 5,
+  "started_at": "2026-01-15T14:38:16.760669",
+  "entries": [
+    {
+      "round": 0,
+      "timestamp": "2026-01-15T14:38:16.588874",
+      "actions": [
+        [
+          4,
+          1,
+          6,
+          6,
+          6
+        ],
+        [
+          0,
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          4,
+          0,
+          6
+        ],
+        [
+          1,
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          1,
+          0,
+          6,
+          1,
+          4
+        ]
+      ],
+      "state_after": {
+        "round": 1,
+        "islands": [
+          {
+            "id": 0,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 1,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 2,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 3,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 4,
+            "economy": 1000.0,
+            "degree": 0
+          }
+        ],
+        "roads": []
+      }
+    },
+    {
+      "round": 1,
+      "timestamp": "2026-01-15T14:38:16.675198",
+      "actions": [
+        [
+          4,
+          1,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          0,
+          0,
+          6
+        ],
+        [
+          1,
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          1,
+          0,
+          6,
+          6,
+          0
+        ],
+        [
+          6,
+          6,
+          6,
+          6,
+          6
+        ]
+      ],
+      "state_after": {
+        "round": 2,
+        "islands": [
+          {
+            "id": 0,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 1,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 2,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 3,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 4,
+            "economy": 1000.0,
+            "degree": 0
+          }
+        ],
+        "roads": []
+      }
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-01-15T14:38:16.760540",
+      "actions": [
+        [
+          4,
+          1,
+          6,
+          6,
+          6
+        ],
+        [
+          1,
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          1,
+          0,
+          6,
+          1,
+          0
+        ],
+        [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6,
+          4
+        ]
+      ],
+      "state_after": {
+        "round": 3,
+        "islands": [
+          {
+            "id": 0,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 1,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 2,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 3,
+            "economy": 1000.0,
+            "degree": 0
+          },
+          {
+            "id": 4,
+            "economy": 1000.0,
+            "degree": 0
+          }
+        ],
+        "roads": []
+      }
+    }
+  ],
+  "final_state": {
+    "round": 3,
+    "islands": [
+      {
+        "id": 0,
+        "economy": 1000.0,
+        "degree": 0
+      },
+      {
+        "id": 1,
+        "economy": 1000.0,
+        "degree": 0
+      },
+      {
+        "id": 2,
+        "economy": 1000.0,
+        "degree": 0
+      },
+      {
+        "id": 3,
+        "economy": 1000.0,
+        "degree": 0
+      },
+      {
+        "id": 4,
+        "economy": 1000.0,
+        "degree": 0
+      }
+    ],
+    "roads": []
+  }
+}

@@ -80,7 +80,7 @@ public:
     }
 
     void resolveRound(ActionMatrix& actions) {
-        for (int i = 0; i < islands.size(); ++i) {
+        for (size_t i = 0; i < islands.size(); ++i) {
             if (actions[i][i].type == Action::INVEST_DEFENSE) {
                 islands[i].investInDefense();
             }
@@ -88,7 +88,7 @@ public:
                 islands[i].investInManufacturing();
             }
 
-            for (int j = i + 1; j < islands.size(); ++j) {
+            for (size_t j = i + 1; j < islands.size(); ++j) {
                 if (actions[i][j].type == Action::DESTROY_ROAD ||
                     actions[j][i].type == Action::DESTROY_ROAD) {
                     destroyRoad(i, j);
