@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 async function apiRequest(endpoint, options = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
@@ -60,6 +60,28 @@ export const submissionsApi = {
       body: JSON.stringify({ code, language }),
     }),
   
+  // Upload a bot file (Python)
+  uploadFile: async (file, name) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', name);
+    
+    const response = await fetch(`${API_BASE_URL}/submissions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+      },
+      body: formData,
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Upload failed');
+    }
+    return data;
+  },
+  
   activate: (submissionId) =>
     apiRequest(`/submissions/${submissionId}/activate`, {
       method: 'PUT',
@@ -67,6 +89,42 @@ export const submissionsApi = {
   
   getById: (submissionId) =>
     apiRequest(`/submissions/${submissionId}`),
+};
+
+export const matchesApi = {
+  getAll: (userId) => 
+    apiRequest(`/matches${userId ? `?userId=${userId}` : ''}`),
+  
+  getById: (matchId) =>
+    apiRequest(`/matches/${matchId}`),
+  
+  create: (lobbyId, userId) =>
+    apiRequest('/matches', {
+      method: 'POST',
+      body: JSON.stringify({ lobbyId, userId }),
+    }),
+  
+  run: (matchId) =>
+    apiRequest(`/matches/${matchId}`, {
+      method: 'POST',
+    }),
+  
+  getLog: (matchId) =>
+    apiRequest(`/matches/${matchId}/log`),
+};
+
+export const lobbiesApi = {
+  getAll: () => apiRequest('/admin/lobbies'),
+  
+  join: (lobbyId, userId, inviteCode) =>
+    apiRequest(`/lobbies/${lobbyId}/join`, {
+      method: 'POST',
+      body: JSON.stringify({ userId, inviteCode }),
+    }),
+};
+
+export const healthApi = {
+  check: () => apiRequest('/health'),
 };
 
 export const adminApi = {
@@ -90,9 +148,9 @@ export const adminApi = {
       method: 'POST',
     }),
   
-  createLobby: (name) =>
+  createLobby: (name, creatorId, isPrivate, maxPlayers) =>
     apiRequest('/admin/lobbies', {
       method: 'POST',
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, creatorId, isPrivate, maxPlayers }),
     }),
 };

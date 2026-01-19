@@ -1,6 +1,5 @@
 """
-Bot 1 - Conservative Trader
-Focuses on trading to grow economy
+Bot 1 - Conservative Trader (moved to dev_tools)
 """
 def get_action(game_state):
     """Return trading action"""

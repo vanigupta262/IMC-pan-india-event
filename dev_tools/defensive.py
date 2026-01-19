@@ -1,6 +1,5 @@
 """
-Bot 2 - Defensive Builder
-Strategy: Focuses on INVEST_DEFENSE actions to build strong defense
+Bot 2 - Defensive Builder (moved to dev_tools)
 """
 def get_action(game_state):
     """Always perform INVEST_DEFENSE action"""

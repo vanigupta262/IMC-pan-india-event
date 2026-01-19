@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import sys
 import json
+from pathlib import Path
 
-# Read input
+# This debug bot can be run from dev_tools; ensure CWD is repo root when needed.
 data = sys.stdin.read()
-
-# Write debug to stderr
 sys.stderr.write(f"DEBUG: Received input: {data}\n")
 sys.stderr.flush()
 
@@ -19,7 +18,6 @@ except Exception as e:
     sys.stderr.flush()
     snapshot = {}
 
-# Output
 output = {"version": "1.0", "actions": [{"type": "TEST", "target": 99}]}
 sys.stdout.write(json.dumps(output))
 sys.stdout.flush()

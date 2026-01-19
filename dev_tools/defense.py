@@ -1,6 +1,5 @@
 """
-Bot 2 - Defensive Investor
-Focuses on building defense
+Bot 2 - Defensive Investor (moved to dev_tools)
 """
 def get_action(game_state):
     """Return defense investment action"""

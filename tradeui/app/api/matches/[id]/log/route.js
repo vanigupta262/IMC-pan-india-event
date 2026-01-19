@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:8000';
 
-export async function PUT(request, { params }) {
+export async function GET(request, { params }) {
   try {
     const authHeader = request.headers.get('authorization');
-    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
@@ -13,48 +12,32 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const { id } = params;
-    
-    // Extract bot ID from submission ID (format: bot-{id})
-    const botId = id.replace('bot-', '');
-    
+    const matchId = params.id.replace('match-', '');
+
     try {
-      // Activate bot in backend
-      const response = await fetch(`${BACKEND_URL}/bots/${botId}/activate`, {
-        method: 'POST',
-      });
+      const response = await fetch(`${BACKEND_URL}/matches/${matchId}/log`);
       
       if (response.ok) {
+        const log = await response.json();
+        
         return NextResponse.json({
           success: true,
-          message: `Submission ${id} activated successfully`,
-          data: {
-            id,
-            isActive: true,
-            status: 'running',
-          },
+          data: log,
         });
       }
-      
+
       const error = await response.json();
       return NextResponse.json(
-        { success: false, error: error.detail || 'Failed to activate bot' },
+        { success: false, error: error.detail || 'Match log not found' },
         { status: response.status }
       );
     } catch (backendError) {
       console.log('Backend not available:', backendError.message);
+      return NextResponse.json(
+        { success: false, error: 'Backend not available' },
+        { status: 503 }
+      );
     }
-    
-    // Fallback mock response
-    return NextResponse.json({
-      success: true,
-      message: `Submission ${id} activated successfully`,
-      data: {
-        id,
-        isActive: true,
-        status: 'running',
-      },
-    });
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },

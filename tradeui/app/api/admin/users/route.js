@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+
+const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:8000';
+
 export async function GET(request) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -8,6 +11,10 @@ export async function GET(request) {
         { status: 401 }
       );
     }
+
+    // Note: The backend doesn't have a /users endpoint to list all users
+    // In production, you'd add this endpoint to the backend
+    // For now, return mock data
     return NextResponse.json({
       success: true,
       data: [

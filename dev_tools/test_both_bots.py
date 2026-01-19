@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Test both bots coordinating in a match"""
+"""Test both bots coordinating in a match (moved to dev_tools)."""
 import json
 import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent
 
 print("=" * 70)
 print("TESTING BOTH BOTS WITH COORDINATION")
@@ -24,7 +27,8 @@ for round_num in range(1, 6):
         ["python3", "bots/trader_bot.py"],
         input=json.dumps(snapshot_p0),
         capture_output=True,
-        text=True
+        text=True,
+        cwd=str(ROOT)
     )
     
     try:
@@ -49,7 +53,8 @@ for round_num in range(1, 6):
         ["python3", "bots/defensive_bot.py"],
         input=json.dumps(snapshot_p1),
         capture_output=True,
-        text=True
+        text=True,
+        cwd=str(ROOT)
     )
     
     try:
