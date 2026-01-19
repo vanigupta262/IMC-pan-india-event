@@ -1,6 +1,6 @@
 # Frontend - IGTS × IMC Event 2
 
-Simple web UI for the game platform, built with vanilla HTML/CSS/JavaScript.
+Web UI for the game platform, built with vanilla HTML/CSS/JavaScript.
 
 ## 🚀 Quick Start
 
@@ -17,7 +17,26 @@ python3 frontend/server.py
 ```
 
 ### 3. Open in Browser
-Navigate to: **http://localhost:3000**
+- **Legacy UI**: http://localhost:3000
+- **Modern UI**: http://localhost:3000/modern/
+
+---
+
+## 📂 UI Versions
+
+### Legacy UI (Root)
+The original single-page application with tabs.
+- URL: `http://localhost:3000`
+- Files: `index.html`, `app.js`
+
+### Modern UI (modern/)
+New multi-page application with professional design.
+- URL: `http://localhost:3000/modern/`
+- Features:
+  - Landing page with hero section
+  - Separate login/signup pages
+  - Dashboard with Monaco code editor
+  - Modern card-based design
 
 ---
 
@@ -44,10 +63,17 @@ Navigate to: **http://localhost:3000**
 ### Architecture
 ```
 frontend/
-├── index.html      # Main UI (tabs, forms, panels)
-├── app.js          # Frontend logic (API calls, event handlers)
-├── server.py       # Simple Python HTTP server
-└── README.md       # This file
+├── index.html      # Legacy UI (single-page app)
+├── app.js          # Legacy UI logic
+├── server.py       # Python HTTP server
+├── README.md       # This file
+└── modern/         # Modern UI folder
+    ├── index.html      # Landing page
+    ├── login.html      # Login page
+    ├── signup.html     # Registration page
+    ├── dashboard.html  # Main dashboard
+    ├── dashboard.js    # Dashboard logic
+    └── styles.css      # CSS design system
 ```
 
 ### API Integration

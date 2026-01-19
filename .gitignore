@@ -1,4 +1,5 @@
 # Python
+.next
 *.pyc
 *.pyo
 *.pyd
