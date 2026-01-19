@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  lobbyId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lobby              Lobby?       @relation(fields: [lobbyId], references: [id], onDelete: SetNull)
+  submissions        Submission[]
+  activeSubmissionId String?
+
+  @@index([email])
+  @@index([lobbyId])
+}
+
+model Submission {
+  id        String   @id @default(cuid())
+  userId    String
+  code      String   @db.Text
+  language  String   @default("cpp")
+  status    String   @default("pending")
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+model Lobby {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  maxUsers  Int      @default(10)
+  status    String   @default("waiting")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  startedAt DateTime?
+
+  users User[]
+
+  @@index([status])
+}
+
+model GlobalSettings {
+  id               String   @id @default(cuid())
+  isGloballyPaused Boolean  @default(false)
+  updatedAt        DateTime @updatedAt
+}
