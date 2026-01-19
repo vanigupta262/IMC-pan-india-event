@@ -1,9 +1,28 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/lib/stores/auth-store';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Code2, Users, Trophy, ArrowRight } from "lucide-react";
+import { Code2, Users, Trophy, ArrowRight, LogOut, LayoutDashboard } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Wait for hydration to avoid mismatch
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
@@ -17,12 +36,29 @@ export default function Home() {
               <h1 className="text-xl font-bold text-gray-900">Trade Simulation</h1>
             </div>
             <div className="flex gap-3">
-              <Link href="/login">
-                <Button variant="ghost">Sign In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Get Started</Button>
-              </Link>
+              {isHydrated && user ? (
+                <>
+                  <Link href="/dashboard">
+                    <Button variant="ghost" className="gap-2">
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Button variant="outline" onClick={handleLogout} className="gap-2">
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button variant="ghost">Sign In</Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button>Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -37,11 +73,19 @@ export default function Home() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
             Write C++ trading algorithms, test them in real-time simulations, and compete with others in managed lobbies.
           </p>
-          <Link href="/signup">
-            <Button size="lg" className="gap-2">
-              Start Coding <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
+          {isHydrated && user ? (
+            <Link href="/dashboard">
+              <Button size="lg" className="gap-2">
+                Go to Dashboard <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/signup">
+              <Button size="lg" className="gap-2">
+                Start Coding <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Features */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/stores/auth-store';
@@ -12,7 +12,7 @@ import { UserPlus, AlertCircle } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signup, isLoading } = useAuthStore();
+  const { signup, isLoading, user } = useAuthStore();
   
   const [formData, setFormData] = useState({
     username: '',
@@ -22,6 +22,13 @@ export default function SignupPage() {
   });
   
   const [error, setError] = useState('');
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
 
   const handleChange = (e) => {
     setFormData({
