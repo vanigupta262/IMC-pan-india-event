@@ -1,0 +1,1 @@
+def get_action(s): return {'type': 'NO_OP', 'target': -1}
