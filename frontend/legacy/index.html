@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGTS × IMC Event 2 - Game Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="user-profile hidden" id="user-profile">
+                👤 <span id="logged-username">Guest</span>
+            </div>
+            <h1>🎮 IGTS × IMC Event 2</h1>
+            <p class="subtitle">Strategy Game Platform - Local Development</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="register">Register</button>
+            <button class="tab" data-tab="bots">My Bots</button>
+            <button class="tab" data-tab="lobbies">Lobbies</button>
+            <button class="tab" data-tab="matches">Matches</button>
+            <button class="tab" data-tab="stats">Stats</button>
+        </div>
+
+        <!-- Register Panel -->
+        <div class="content-panel active" id="register-panel">
+            <div class="card">
+                <h2>Create Account</h2>
+                <div id="register-message"></div>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="reg-username">Username</label>
+                        <input type="text" id="reg-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email</label>
+                        <input type="email" id="reg-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" required>
+                    </div>
+                    <button type="submit" class="primary">Register</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Quick Start Guide</h2>
+                <div class="alert alert-info">
+                    <strong>Welcome!</strong> This is a local development UI. To get started:
+                    <ol style="margin-top: 10px; margin-left: 20px;">
+                        <li>Register an account above</li>
+                        <li>Upload a bot in the "My Bots" tab</li>
+                        <li>Create or join a lobby</li>
+                        <li>Start a match when ready!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bots Panel -->
+        <div class="content-panel" id="bots-panel">
+            <div class="card">
+                <h2>Upload Bot</h2>
+                <div id="bot-message"></div>
+                <form id="bot-upload-form">
+                    <div class="form-group">
+                        <label for="bot-name">Bot Name</label>
+                        <input type="text" id="bot-name" placeholder="e.g., GreedyBot v1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bot-file">Bot File (.py)</label>
+                        <input type="file" id="bot-file" accept=".py" required>
+                    </div>
+                    <button type="submit" class="primary">Upload Bot</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>My Bots</h2>
+                <div id="bot-list" class="bot-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading bots...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lobbies Panel -->
+        <div class="content-panel" id="lobbies-panel">
+            <div class="card">
+                <h2>Create Lobby</h2>
+                <div id="lobby-message"></div>
+                <form id="create-lobby-form">
+                    <div class="form-group">
+                        <label for="lobby-name">Lobby Name</label>
+                        <input type="text" id="lobby-name" placeholder="e.g., Practice Match" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="lobby-private"> Private Lobby (requires invite code)
+                        </label>
+                    </div>
+                    <button type="submit" class="primary">Create Lobby</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Available Lobbies</h2>
+                <div id="lobby-list" class="lobby-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading lobbies...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matches Panel -->
+        <div class="content-panel" id="matches-panel">
+            <div class="card">
+                <h2>My Matches</h2>
+                <div id="match-list" class="match-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading matches...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="content-panel" id="stats-panel">
+            <div class="card">
+                <h2>Platform Statistics</h2>
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-users">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-bots">0</div>
+                        <div class="stat-label">Bots Uploaded</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-matches">0</div>
+                        <div class="stat-label">Matches Played</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-lobbies">0</div>
+                        <div class="stat-label">Active Lobbies</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>System Status</h2>
+                <div id="system-status">
+                    <div class="alert alert-info">
+                        <strong>Backend:</strong> <span id="backend-status">Checking...</span><br>
+                        <strong>Database:</strong> <span id="db-status">Checking...</span><br>
+                        <strong>Engine:</strong> <span id="engine-status">Checking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Lobby Modal -->
+    <div id="join-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Join Private Lobby</h2>
+            <p id="modal-lobby-name"></p>
+
+            <div class="form-group">
+                <label for="invite-code-input">Invite Code</label>
+                <input type="text" id="invite-code-input" placeholder="Enter the invite code">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="primary" onclick="confirmJoinLobby()">Join</button>
+                <button class="secondary" onclick="closeJoinModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=12"></script>
+</body>
+
+</html>

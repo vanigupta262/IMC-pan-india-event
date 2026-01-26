@@ -1,124 +1,102 @@
-# IMC Pan-India Event - Trading Game Simulation
+# 🎮 IGTS × IMC Algo Trading Platform
 
-A multiplayer economic strategy game engine where bots representing countries compete by trading, building roads, attacking, and managing their economies.
+Welcome to the **IGTS × IMC Algo Trading Platform**, a local development environment tailored for the 2026 Inter-IIT Tech Meet. This platform allows you to write, test, and compete with Python trading bots in a simulated island economy.
 
-## 🎮 Overview
+## 🚀 Quick Start
 
-This is a turn-based simulation where multiple countries (controlled by bots) interact through:
-- **Trading** - Bilateral trade agreements that boost both economies
-- **Building Roads** - Infrastructure that enhances trade efficiency
-- **Attacking** - Raid connected countries to steal economy
-- **Destroying Roads** - Break connections with other countries
+### 1. Prerequisites
+- **Linux** (or WSL2 on Windows)
+- **Docker Desktop / Docker Engine** (Required for sandboxing)
+- **Python 3.8+**
+- **G++** (GCC C++ Compiler)
 
-## 📁 Project Structure
-
-```
-├── bots/              # Bot implementations
-│   ├── random_bot.py  # Random action bot
-│   └── trade_bot.py   # Simple trade-focused bot
-├── engine/            # Core game engine
-│   ├── actions.py     # Action types (TRADE, BUILD, ATTACK, DESTROY, NO_OP)
-│   ├── bot_api.py     # Builds state dict for bots
-│   ├── config.py      # Game configuration constants
-│   ├── country.py     # Country class with economy/defense/manufacturing
-│   ├── resolver.py    # Resolves all actions each round
-│   ├── route.py       # Road/route utilities
-│   ├── serialize.py   # State serialization
-│   └── state.py       # GameState management
-├── runner/            # Match execution
-│   ├── bot_adapter.py # Parses bot output into actions
-│   ├── local_match.py # Local match runner
-│   └── serialize.py   # Action serialization
-└── match_log.json     # Output log of match results
-```
-
-## ⚙️ Game Mechanics
-
-### Country Stats
-- **Economy** - Starting value: 100.0 (main resource)
-- **Defense** - Reduces attack damage (max: 1.0)
-- **Manufacturing** - Production capability (max: 1.0)
-
-### Actions
-
-| Action | Type | Requirement | Effect |
-|--------|------|-------------|--------|
-| **TRADE** | Bilateral | Both must agree | Both gain economy (10% of min economy, 5% if no road) |
-| **BUILD** | Bilateral | Both must agree | Creates road, costs 20% of min economy each |
-| **ATTACK** | Unilateral | Road must exist | Steals economy based on defender's economy & defense, destroys road |
-| **DESTROY** | Unilateral | Road must exist | Removes road immediately |
-
-### Resolution Order
-1. **Destroy** - Roads are removed first
-2. **Attack** - Attacks processed (road destroyed after)
-3. **Trade** - Mutual trades resolved
-4. **Build** - New roads constructed
-5. **Decay** - Stat decay applied
-
-## 🤖 Bot Interface
-
-Each bot receives a state dictionary and returns a list of actions:
-
-### Input State
-```python
-state = {
-    "self_id": int,           # Your country ID
-    "round": int,             # Current round number
-    "countries": {
-        id: {
-            "economy": float,
-            "defense": float,
-            "manufacturing": float
-        }
-    },
-    "roads": [(i, j), ...]    # Existing roads
-}
-```
-
-### Bot Output
-```python
-# Return a list of action dictionaries
-[
-    {"type": "TRADE", "target": 1},
-    {"type": "BUILD", "target": 2},
-    {"type": "ATTACK", "target": 3},
-    {"type": "DESTROY", "target": 4}
-]
-```
-
-## 🚀 Running a Match
-
+### 2. Setup
+Run the setup script to install dependencies, compile the engine, and **build the sandbox image**.
 ```bash
-python runner/local_match.py
+./setup.sh
 ```
 
-This runs a 3-round match with 10 players and outputs results to `match_log.json`.
+> **Note**: You must have Docker running. If `setup.sh` fails at step 2, start Docker and try again.
 
-## 📊 Configuration
+### 3. Launch
+Start the platform (frontend + backend).
+```bash
+./launch.sh
+```
+The dashboard will open automatically at [http://localhost:3000](http://localhost:3000).
 
-Edit `engine/config.py` to adjust game parameters:
+---
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `N_PLAYERS` | 10 | Number of countries |
-| `START_ECONOMY` | 100.0 | Initial economy |
-| `ATTACK_FACTOR` | 0.4 | Attack damage multiplier |
-| `DEFENSE_FACTOR` | 0.85 | Defense effectiveness |
-| `ROAD_BUILD_COST` | 0.2 | Cost to build roads (% of min economy) |
-| `TRADE_POOL_FACTOR` | 0.1 | Trade gain (% of min economy) |
-| `AIR_TRADE_PENALTY` | 0.5 | Penalty for trading without road |
+## 🤖 Writing Your Bot
 
-## 📝 Creating a Bot
+Bots are simple Python scripts that implement a `get_action(state)` function.
 
-1. Create a new file in `bots/` directory
-2. Implement a `PM(state)` function that returns actions
-3. Update the import in `runner/local_match.py`
+### Basic Structure
+Create a `.py` file (e.g., `my_bot.py`) with the following structure:
 
-Example minimal bot:
 ```python
-def PM(state):
-    self_id = state["self_id"]
-    # Trade with the next player
-    target = (self_id + 1) % len(state["countries"])
-    return [{"type": "TRADE", "target": target}]
+import random
+
+def get_action(game_state):
+    """
+    Decide the next action for your player.
+    
+    Args:
+        game_state (dict): Contains 'round', 'player_id', 'n_players', 'players', 'roads'
+    
+    Returns:
+        dict: {'type': 'ACTION_TYPE', 'target': target_id}
+    """
+    my_id = game_state["player_id"]
+    
+    # Example: Randomly trade or build roads
+    actions = ["TRADE", "BUILD_ROAD", "INVEST_DEFENSE", "INVEST_MANUFACTURING", "NO_OP"]
+    action_type = random.choice(actions)
+    
+    # Choose a target (must be a valid player ID)
+    target = random.choice([p for p in range(game_state["n_players"]) if p != my_id])
+    
+    return {
+        "type": action_type,
+        "target": target
+    }
 ```
+
+### Available Actions
+| Action Type | Description |
+| :--- | :--- |
+| `BUILD_ROAD` | Build a road to another player (Cost depends on economy) |
+| `TRADE` | Trade with another player to boost both economies |
+| `ATTACK` | Attack a connected player (Requires road) |
+| `DESTROY_ROAD` | Destroy an existing road to cut off a player |
+| `INVEST_DEFENSE` | Increase your defense stat |
+| `INVEST_MANUFACTURING` | Increase manufacturing (reduces road costs) |
+| `NO_OP` | Do nothing this round |
+
+---
+
+## 🏗️ Architecture
+
+The platform consists of three main components:
+
+1.  **Frontend (Port 3000)**: A `http.server` hosting a vanilla JS/HTML dashboard for managing bots and lobbies.
+2.  **Backend (Port 8000)**: A **FastAPI** application handling users, authentication, matchmaking, and orchestration.
+3.  **Game Engine (C++)**: A high-performance compiled binary (`./game`) that runs the actual simulation logic.
+
+### Data Flow
+1.  **Orchestrator**: The backend collects bot scripts for a match.
+2.  **Execution**: Bots are executed (locally or sandboxed) to generate actions for each round.
+3.  **Simulation**: Actions are written to `actions.txt`, and the C++ engine processes them to calculate economy changes.
+4.  **Results**: The backend parses the engine output and serves the match logs to the frontend.
+
+---
+
+## 🛠️ Troubleshooting
+
+-   **"Engine not found"**: Run `./setup.sh` to recompile the C++ engine.
+-   **"Backend failed to start"**: Check `/tmp/backend.log` for Python errors.
+-   **"NO_OP issues"**: Ensure your bot file has the correct `get_action(state)` signature.
+
+---
+
+**Built for IGTS × IMC Event.**
