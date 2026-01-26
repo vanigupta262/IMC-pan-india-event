@@ -14,6 +14,9 @@ private:
 
 public:
 
+    int blackSwanRound = -1;
+    int blackSwanSeed = 0;
+
     IOHandler() {
         loadAllRoundsFromFile();
     }
@@ -30,6 +33,17 @@ public:
         std::string line;
         
         while (std::getline(fin, line)) {
+            if (line.empty()) continue;
+
+            // Check for Black Swan config
+            if (line.substr(0, 3) == "BS:") {
+                std::istringstream iss(line.substr(3));
+                if (iss >> blackSwanRound >> blackSwanSeed) {
+                    std::cout << "[IOHandler] Black Swan config loaded: round=" << blackSwanRound << ", seed=" << blackSwanSeed << "\n";
+                }
+                continue;
+            }
+
             std::vector<std::pair<int, int>> playerActions;
             std::istringstream iss(line);
             std::string token;

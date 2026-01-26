@@ -1,6 +1,6 @@
 #!/bin/bash
 # IGTS × IMC Event - Local Development Launcher
-# Starts both backend and frontend servers with a simple command
+# Starts both backend and frontend servers
 
 set -e
 
@@ -8,77 +8,85 @@ cd "$(dirname "$0")" || exit 1
 
 FRONTEND_PORT=3000
 BACKEND_PORT=8000
-PROJECT_DIR="$(pwd)"
 
-# Colors for output
+# Colors
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 echo -e "${BLUE}================================================${NC}"
-echo -e "${BLUE}🎮 IGTS × IMC Event 2 - Local Development${NC}"
+echo -e "${BLUE}🎮 IGTS × IMC Event - Launching Platform${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo ""
 
-# Check if virtual environment exists
-if [ ! -d ".venv" ]; then
-    echo -e "${RED}❌ Virtual environment not found${NC}"
-    echo "Please run: python3 -m venv .venv"
-    exit 1
+# 1. Check if Setup is needed
+if [ ! -d ".venv" ] || [ ! -f "game" ]; then
+    echo -e "${RED}⚠️  Environment not ready. Running setup...${NC}"
+    chmod +x setup.sh
+    ./setup.sh
+    echo ""
 fi
 
-# Activate virtual environment
-echo "🔧 Activating virtual environment..."
+# 1.5 Docker Check & Fallback
+if command -v docker >/dev/null 2>&1 && sudo docker info >/dev/null 2>&1; then
+    echo -e "${GREEN}✅ Docker is running. Sandboxing enabled.${NC}"
+else
+    echo -e "${YELLOW}⚠️  Docker not verified. Enabling INSECURE LOCAL EXECUTION.${NC}"
+    echo -e "${YELLOW}   Bots will run directly on host. Use with caution.${NC}"
+    export ALLOW_INSECURE_LOCAL_EXECUTION=1
+fi
+
+# 2. Activate Environment
 source .venv/bin/activate
 
-# Kill any existing processes
-echo "🧹 Cleaning up old processes..."
-lsof -ti:$BACKEND_PORT 2>/dev/null | xargs kill -9 2>/dev/null || true
-lsof -ti:$FRONTEND_PORT 2>/dev/null | xargs kill -9 2>/dev/null || true
+# 3. Cleanup Old Processes
+echo -e "${BLUE}🧹 Cleaning up ports...${NC}"
+fuser -k $BACKEND_PORT/tcp > /dev/null 2>&1 || true
+fuser -k $FRONTEND_PORT/tcp > /dev/null 2>&1 || true
+pkill -f "python3 backend/app.py" || true
+pkill -f "python3 frontend/server.py" || true
 sleep 1
 
-# Start backend
-echo -e "${GREEN}✅ Starting Backend...${NC}"
+# 4. Start Backend (with timeout)
+echo -e "${GREEN}✅ Starting Backend on port $BACKEND_PORT...${NC}"
 python3 backend/app.py > /tmp/backend.log 2>&1 &
 BACKEND_PID=$!
-sleep 2
 
-# Verify backend is running
-if ! curl -s http://localhost:$BACKEND_PORT/health > /dev/null 2>&1; then
-    echo -e "${RED}❌ Backend failed to start${NC}"
-    cat /tmp/backend.log
-    exit 1
-fi
+echo "   Waiting for backend to be ready..."
+MAX_RETRIES=10
+COUNT=0
+URL="http://localhost:$BACKEND_PORT/health"
 
-# Start frontend
-echo -e "${GREEN}✅ Starting Frontend...${NC}"
+while ! curl -s $URL > /dev/null; do
+    sleep 1
+    COUNT=$((COUNT+1))
+    if [ $COUNT -ge $MAX_RETRIES ]; then
+        echo -e "${RED}❌ Backend failed to start (Timeout). Logs:${NC}"
+        tail -n 20 /tmp/backend.log
+        kill $BACKEND_PID 2>/dev/null || true
+        exit 1
+    fi
+done
+
+# 5. Start Frontend
+echo -e "${GREEN}✅ Starting Frontend on port $FRONTEND_PORT...${NC}"
 python3 frontend/server.py > /tmp/frontend.log 2>&1 &
 FRONTEND_PID=$!
 sleep 1
 
-# Verify frontend is running
-if ! curl -s http://localhost:$FRONTEND_PORT/index.html > /dev/null 2>&1; then
-    echo -e "${RED}❌ Frontend failed to start${NC}"
-    cat /tmp/frontend.log
-    exit 1
-fi
-
-# Display startup message
+# 6. Ready Message
 echo ""
 echo -e "${GREEN}================================================${NC}"
-echo -e "${GREEN}🎮 Platform is ready!${NC}"
+echo -e "${GREEN}🚀 Platform is LIVE!${NC}"
 echo -e "${GREEN}================================================${NC}"
 echo ""
-echo "📱 Frontend: ${BLUE}http://localhost:$FRONTEND_PORT${NC}"
-echo "🔌 Backend:  ${BLUE}http://localhost:$BACKEND_PORT${NC}"
-echo "📚 API Docs: ${BLUE}http://localhost:$BACKEND_PORT/docs${NC}"
+echo -e "📱 Frontend: ${BLUE}http://localhost:$FRONTEND_PORT${NC}"
+echo -e "🔌 Backend:  ${BLUE}http://localhost:$BACKEND_PORT${NC}"
+echo -e "📚 API Docs: ${BLUE}http://localhost:$BACKEND_PORT/docs${NC}"
 echo ""
-echo "💡 Opening browser in 2 seconds..."
-echo ""
-sleep 2
 
-# Open browser
+# 7. Open Browser
 if command -v open > /dev/null 2>&1; then
     open "http://localhost:$FRONTEND_PORT"
 elif command -v xdg-open > /dev/null 2>&1; then
@@ -87,25 +95,19 @@ else
     echo "📱 Please open: http://localhost:$FRONTEND_PORT"
 fi
 
-echo ""
-echo -e "${BLUE}Servers running with PIDs:${NC}"
-echo "  Backend:  $BACKEND_PID"
-echo "  Frontend: $FRONTEND_PID"
-echo ""
-echo -e "${BLUE}Press Ctrl+C to stop both servers${NC}"
+# 8. Process Manager
+echo -e "${BLUE}Servers running (PID: Backend=$BACKEND_PID, Frontend=$FRONTEND_PID)${NC}"
+echo -e "${BLUE}Press Ctrl+C to stop${NC}"
 echo ""
 
-# Handle shutdown
 cleanup() {
     echo ""
     echo -e "${BLUE}Shutting down...${NC}"
     kill $BACKEND_PID 2>/dev/null || true
     kill $FRONTEND_PID 2>/dev/null || true
-    echo -e "${GREEN}✅ Servers stopped${NC}"
+    echo -e "${GREEN}✅ Stopped${NC}"
     exit 0
 }
 
 trap cleanup SIGINT SIGTERM
-
-# Wait for processes
 wait

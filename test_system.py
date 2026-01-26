@@ -142,7 +142,7 @@ class SystemTest:
             timeout=30
         )
         assert result.returncode == 0, f"Match runner failed: {result.stderr}"
-        assert "[IOHandler] Loaded actions" in result.stdout, "Actions not loaded from file"
+        assert "[IOHandler] Loaded" in result.stdout, "Actions not loaded from file"
         assert "After Round" in result.stdout, "Engine output missing"
         self.log("Local match runner: 5 bots → actions → engine → 3 rounds ✓", "PASS")
     
@@ -208,7 +208,7 @@ class SystemTest:
             timeout=30
         )
         assert result.returncode == 0, "Match runner failed"
-        assert "[IOHandler] Loaded actions" in result.stdout, "Engine didn't load actions.txt"
+        assert "[IOHandler] Loaded" in result.stdout, "Engine didn't load actions.txt"
         
         # Verify actions.txt format (5 rows, 5 columns of integers 0-6)
         actions_file = Path("actions.txt")

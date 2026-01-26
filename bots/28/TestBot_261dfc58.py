@@ -1,0 +1,1 @@
+def get_action(s): return {'type': 'TRADE', 'target': (s['player_id'] + 1) % s['num_players']}

@@ -23,7 +23,11 @@ except ImportError:
     SANDBOX_AVAILABLE = False
 
 # Import Black Swan event handler
-from black_swan import BlackSwanEvent
+# Import Black Swan event handler
+try:
+    from .black_swan import BlackSwanEvent
+except ImportError:
+    from black_swan import BlackSwanEvent
 
 
 class GameOrchestrator:
@@ -80,6 +84,31 @@ class GameOrchestrator:
         self.bot_states = {p["id"]: {} for p in players}
         self.player_economies = {p["id"]: 1000 for p in players}  # Initial economy
 
+        # Auto-fill with IGTS Bots if fewer than 5 players
+        target_players = 5
+        if self.num_players < target_players:
+            print(f"[Match {match_id}] Auto-filling with {target_players - self.num_players} IGTS Bots")
+            # Ensure we have a dummy bot file
+            dummy_bot = "bots/random_bot.py"
+            if not os.path.exists(dummy_bot) and os.path.exists("demo_bots/random_bot.py"):
+                dummy_bot = "demo_bots/random_bot.py"
+            
+            for i in range(self.num_players, target_players):
+                # Add dummy player
+                self.players.append({
+                    "id": i,
+                    "username": f"IGTS Bot {i+1}",
+                    "is_bot": True
+                })
+                # Add dummy bot
+                self.bots[i] = dummy_bot
+                # Initialize state
+                self.bot_states[i] = {}
+                self.player_economies[i] = 1000
+            
+            # Update num_players
+            self.num_players = target_players
+
         # Initialize Black Swan event
         self.black_swan = BlackSwanEvent(
             num_rounds=self.NUM_ROUNDS, enabled=enable_black_swan, seed=black_swan_seed
@@ -107,32 +136,43 @@ class GameOrchestrator:
         try:
             # Use sandbox if available
             if SANDBOX_AVAILABLE:
-                result = run_bot_in_sandbox(
-                    bot_file, game_state, timeout=2.0, memory="256m", cpus=0.5
-                )
+                try:
+                    result = run_bot_in_sandbox(
+                        bot_file, game_state, timeout=2.0, memory="256m", cpus=0.5
+                    )
 
-                # Handle different response formats
-                # Format 1: {"type": "...", "target": ...}
-                if "type" in result:
-                    action_type = result.get("type", "NO_OP")
-                    target = result.get("target", -1)
-                # Format 2: {"version": "1.0", "actions": [...]}
-                elif "actions" in result:
-                    actions = result.get("actions", [])
-                    # Find the action for this player_id
-                    if player_id < len(actions):
-                        player_action = actions[player_id]
-                        action_type = player_action.get("type", "NO_OP")
-                        target = player_action.get("target", -1)
+                    # Handle different response formats
+                    # Format 1: {"type": "...", "target": ...}
+                    if "type" in result:
+                        action_type = result.get("type", "NO_OP")
+                        target = result.get("target", -1)
+                    # Format 2: {"version": "1.0", "actions": [...]}
+                    elif "actions" in result:
+                        actions = result.get("actions", [])
+                        # Find the action for this player_id
+                        if player_id < len(actions):
+                            player_action = actions[player_id]
+                            action_type = player_action.get("type", "NO_OP")
+                            target = player_action.get("target", -1)
+                        else:
+                            action_type = "NO_OP"
+                            target = -1
                     else:
                         action_type = "NO_OP"
                         target = -1
-                else:
-                    action_type = "NO_OP"
-                    target = -1
 
-                print(f"[Sandbox] Player {player_id} bot returned: {action_type}")
-                return {"type": action_type, "target": target}
+                    print(f"[Sandbox] Player {player_id} bot returned: {action_type}")
+                    return {"type": action_type, "target": target}
+                except Exception as e:
+                    print(f"[Error] Sandbox failed for bot {player_id}: {e}")
+                    
+                    # Security Check: Only fallback if explicitly allowed
+                    if os.getenv("ALLOW_INSECURE_LOCAL_EXECUTION", "0") != "1":
+                        print(f"[Security] Local fallback disabled. Returning NO_OP for bot {player_id}.")
+                        return {"type": "NO_OP", "target": -1}
+                        
+                    print(f"[Warning] Falling back to insecure local execution for bot {player_id}.")
+                    # Fall through to local execution
 
             # Fallback: Import bot module dynamically
             import importlib.util
@@ -279,7 +319,7 @@ class GameOrchestrator:
                     game_log["rounds"][round_num - 1]["actions"] = round_actions
 
             print(f"[Match {self.match_id}] Game complete! Final rankings:")
-            if "final_state" in game_log and "rankings" in game_log["final_state"]:
+            if game_log.get("final_state") and "rankings" in game_log["final_state"]:
                 for r in game_log["final_state"]["rankings"]:
                     print(
                         f"  Rank {r['rank']}: Player {r['player_id']} with economy {r['economy']}"
@@ -387,6 +427,17 @@ class GameOrchestrator:
 
         # Write to actions.txt: one line per player, tokens separated by spaces
         with open("actions.txt", "w") as f:
+            # Write Black Swan config if enabled
+            if self.black_swan.enabled:
+                # Use a random seed for C++ engine independently or derive from black_swan event
+                # Since black_swan python object was initialized with a seed (or random), 
+                # we should pass a specific seed to C++ for reproducibility.
+                # Let's generate a seed if one wasn't explicit, or use 42 as default?
+                # Actually, we can use a random int as seed.
+                import random
+                bs_seed = random.randint(0, 1000000)
+                f.write(f"BS: {self.black_swan.event_round} {bs_seed}\n")
+            
             for lines in player_lines:
                 f.write(" ".join(lines) + "\n")
 
@@ -461,6 +512,13 @@ class GameOrchestrator:
 
             for rank, entry in enumerate(rankings, 1):
                 entry["rank"] = rank
+                # Add username from self.players
+                # self.players is a list of dicts: [{"id": i, "username": ...}]
+                player_info = next((p for p in self.players if p["id"] == entry["player_id"]), None)
+                if player_info:
+                    entry["username"] = player_info.get("username", f"Player {entry['player_id']}")
+                else:
+                    entry["username"] = f"Player {entry['player_id']}"
 
             game_log["final_state"] = {
                 "player_economies": {

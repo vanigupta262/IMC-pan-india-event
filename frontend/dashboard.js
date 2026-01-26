@@ -500,6 +500,7 @@ async function createLobby(e) {
 
     const lobbyName = document.getElementById('lobby-name-input').value;
     const isPrivate = document.getElementById('lobby-private-check').checked;
+    const maxPlayers = parseInt(document.getElementById('lobby-max-players').value);
 
     try {
         const response = await fetch(`${API_BASE}/lobbies`, {
@@ -509,7 +510,7 @@ async function createLobby(e) {
                 name: lobbyName,
                 creator_id: parseInt(currentUser.id),
                 is_private: isPrivate,
-                max_players: 2
+                max_players: maxPlayers
             })
         });
 
@@ -775,7 +776,7 @@ async function viewResults(matchId) {
 
         const results = match.participants
             .sort((a, b) => a.rank - b.rank)
-            .map(p => `${p.rank}. Player ${p.player_id}: ${p.final_economy} economy`)
+            .map(p => `${p.rank}. ${p.username || 'Player ' + p.player_id}: ${p.final_economy} economy`)
             .join('\n');
 
         alert(`Match ${matchId} Results:\n\n${results}`);

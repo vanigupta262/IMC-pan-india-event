@@ -9,6 +9,9 @@
 #include "Config.hpp"
 #include "IOHandler.hpp"
 
+#include <random>
+#include <numeric>
+
 class GameState {
 public:
     int round{};
@@ -89,8 +92,9 @@ public:
             }
 
             for (size_t j = i + 1; j < islands.size(); ++j) {
-                if (actions[i][j].type == Action::DESTROY_ROAD ||
-                    actions[j][i].type == Action::DESTROY_ROAD) {
+                if ((actions[i][j].type == Action::DESTROY_ROAD ||
+                     actions[j][i].type == Action::DESTROY_ROAD) && 
+                     hasRoad(i, j)) {
                     destroyRoad(i, j);
                 }
 
@@ -133,9 +137,49 @@ public:
         }
     }
 
+
+
+    void triggerBlackSwan() {
+        std::cout << "!!! BLACK SWAN EVENTS TRIGGERED (Round " << round << ") !!!" << std::endl;
+        std::mt19937 gen(ioHandler.blackSwanSeed);
+        std::bernoulli_distribution dist(0.5);
+
+        // 1. Destroy Roads
+        auto it = roads.begin();
+        while (it != roads.end()) {
+            if (dist(gen)) {
+                std::cout << "Black Swan destroyed road " << it->first << "-" << it->second << "\n";
+                islands[it->first].degree--;
+                islands[it->second].degree--;
+                it = roads.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        
+        // 2. Economy Impact
+        std::vector<int> sortedIndices(islands.size());
+        std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
+        std::sort(sortedIndices.begin(), sortedIndices.end(), [&](int a, int b) {
+            return islands[a].economy > islands[b].economy;
+        });
+
+        std::cout << "Black Swan Economy Impact applied." << std::endl;
+        if (sortedIndices.size() >= 1) islands[sortedIndices[0]].economy *= 0.8; // 1st
+        if (sortedIndices.size() >= 3) islands[sortedIndices[2]].economy *= 1.2; // 3rd
+        if (sortedIndices.size() >= 5) islands[sortedIndices[4]].economy *= 0.8; // 5th
+        
+        // Ensure economy doesn't go negative (though multiplication usually safe, strict rules might say otherwise? Assuming safe)
+    }
+
     void handleRound() {
         ActionMatrix actions{ ioHandler.getActions(static_cast<int>(islands.size())) };
         resolveRound(actions);
+
+        if (round == ioHandler.blackSwanRound) {
+            triggerBlackSwan();
+        }
+
         round++;
     }
 };

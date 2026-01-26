@@ -5,14 +5,17 @@ FastAPI-based platform for team registration, bot uploads, lobbies, and match or
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, Float, Boolean, ForeignKey, Text
-from sqlalchemy.orm import sessionmaker, Session, relationship, declarative_base
+from sqlalchemy.orm import sessionmaker, Session, relationship, declarative_base, joinedload
 from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime, timedelta
 import secrets
 import os
 import json
 from typing import Optional, List
-from game_orchestrator import GameOrchestrator
+try:
+    from .game_orchestrator import GameOrchestrator
+except ImportError:
+    from game_orchestrator import GameOrchestrator
 
 # ============ Database Setup ============
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./igts.db")
@@ -119,6 +122,12 @@ class MatchParticipant(Base):
     
     match = relationship("Match", back_populates="participants")
     bot = relationship("Bot", back_populates="match_participants")
+    
+    @property
+    def username(self):
+        if self.bot and self.bot.owner:
+            return self.bot.owner.username
+        return f"IGTS Bot {self.player_id + 1}"
 
 
 # ============ Schemas (Pydantic) ============
@@ -157,7 +166,7 @@ class LobbyCreate(BaseModel):
     name: str
     creator_id: int
     is_private: bool = False
-    max_players: int = 6  # Tournament standard: up to 6 players
+    max_players: int = 5  # Tournament standard: 5 players, configurable up to 10
 
 
 class LobbyJoin(BaseModel):
@@ -192,6 +201,7 @@ class MatchParticipantResponse(BaseModel):
     player_id: int
     rank: int
     final_economy: int
+    username: str
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -209,7 +219,17 @@ class MatchResponse(BaseModel):
 
 # ============ FastAPI App ============
 
-app = FastAPI(title="IGTS IMC Event API", version="1.0")
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan events: startup and shutdown."""
+    # Startup
+    Base.metadata.create_all(bind=engine)
+    yield
+    # Shutdown (if any)
+
+app = FastAPI(title="IGTS IMC Event API", version="1.0", lifespan=lifespan)
 
 # Add CORS for frontend
 app.add_middleware(
@@ -228,24 +248,12 @@ def get_db():
     finally:
         db.close()
 
-
 # ============ Endpoints ============
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
     return {"status": "ok", "message": "Backend is running"}
-
-@app.on_event("startup")
-def startup():
-    """Create tables on startup."""
-    Base.metadata.create_all(bind=engine)
-
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "ok"}
 
 
 # --- Authentication / User Management ---
@@ -487,6 +495,15 @@ async def create_match(match_data: MatchCreate, user_id: int, db: Session = Depe
         lobby = db.query(Lobby).filter(Lobby.id == match_data.lobby_id).first()
         if not lobby:
             raise HTTPException(status_code=404, detail="Lobby not found")
+            
+        # Check player count
+        member_count = db.query(LobbyMember).filter(LobbyMember.lobby_id == lobby.id).count()
+        if member_count < 2:
+            raise HTTPException(
+                status_code=400, 
+                detail="Lobby must have at least 2 players to start a match"
+            )
+
         new_match.lobby_id = lobby.id
         lobby.status = "started"
     
@@ -514,8 +531,10 @@ async def get_match(match_id: int, db: Session = Depends(get_db)):
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
     
-    # Fetch participants
-    participants = db.query(MatchParticipant).filter(MatchParticipant.match_id == match.id).all()
+    # Fetch participants with eager loading for username property
+    participants = db.query(MatchParticipant).options(
+        joinedload(MatchParticipant.bot).joinedload(Bot.owner)
+    ).filter(MatchParticipant.match_id == match.id).all()
     match.participants = participants
     return match
 
@@ -560,7 +579,8 @@ async def run_match(match_id: int, db: Session = Depends(get_db)):
         game_log = orchestrator.run()
         
         # Create reverse mapping: player_index -> user_id
-        player_to_user = {p["id"]: p["user_id"] for p in players}
+        # Note: Bots auto-filled by orchestrator won't have user_id, map to None
+        player_to_user = {p["id"]: p.get("user_id") for p in players}
         
         # Create match participants with final rankings (if available)
         if game_log.get("final_state") and game_log["final_state"].get("rankings"):
